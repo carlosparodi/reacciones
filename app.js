@@ -279,14 +279,13 @@ function fondoCam(x, y, w, h){
 }
 function dibujarCam(x, y, w, h, t){
   const cw = cam.videoWidth, ch = cam.videoHeight; if (!cw) return;
+  if (t.z < 1) t.z = 1;   // tu cámara siempre llena su espacio: sin bordes
   const conFondo = A.fondo !== 'ninguno' && actualizarPersona();
   if (conFondo){
     fondoCam(x, y, w, h);
-    encuadre(seg.persona, 0, 0, cw, ch, x, y, w, h, t, A.espejo, 'entero');
+    encuadre(seg.persona, 0, 0, cw, ch, x, y, w, h, t, A.espejo, 'llenar');
   } else {
-    // Tu cámara se ve entera (sin zoom) y lo que sobra se rellena con tu misma cámara borrosa
-    borroso(cam, 0, 0, cw, ch, x, y, w, h, A.espejo);
-    encuadre(cam, 0, 0, cw, ch, x, y, w, h, t, A.espejo, 'entero');
+    encuadre(cam, 0, 0, cw, ch, x, y, w, h, t, A.espejo, 'llenar');
   }
 }
 // Mientras el video aparece o se va, tu encuadre pasa suave del de "tú solo" al de pantalla dividida
@@ -450,7 +449,7 @@ cv.addEventListener('pointermove', e => {
     A.split = limitar(A.arriba ? 1 - c.y / H : c.y / H, 0.2, 0.8); s.topH = A.split * H; return;
   }
   const t = gesto.t, esVideo = t === s.vT;
-  const zMin = esVideo ? (A.vFondo === 'lleno' ? 1 : 0.5) : 0.5;
+  const zMin = esVideo ? (A.vFondo === 'lleno' ? 1 : 0.5) : 1;
   if (pts.length > 1 && gesto.d0) t.z = limitar(gesto.z0 * dist(pts) / gesto.d0, zMin, esVideo ? 5 : 6);
   const espejo = !esVideo && A.espejo ? -1 : 1;
   t.x = gesto.x0 + (c.x - gesto.c0.x) * espejo; t.y = gesto.y0 + (c.y - gesto.c0.y);
@@ -764,11 +763,11 @@ $('restablecer').onclick = () => {
 };
 
 // Zoom de tu cámara cuando sales tú solo
-const zoomSolo = k => k === 'cerca' ? 1.6 : k === 'lejos' ? 0.75 : 1;
+const zoomSolo = k => k === 'cerca' ? 1.6 : 1;
 
 // Botones − y + sobre la imagen: acercan o alejan tu cámara
 function zoomCam(f){
-  const t = camActual(); t.z = limitar(Math.round(t.z * f * 100) / 100, 0.5, 6);
+  const t = camActual(); t.z = limitar(Math.round(t.z * f * 100) / 100, 1, 6);
   if (Math.abs(t.z - 1) < 0.04) t.z = 1;
   guardar(); pintarControles();
 }
