@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#0b0b0c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Reacciones">
+<title>Estudio de Reacciones</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="iconos/icono-192.png">
+<link rel="apple-touch-icon" href="iconos/icono-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+
+<!-- ===== Inicio ===== -->
+<main id="inicio" class="pantalla">
+  <header class="cab">
+    <h1>Estudio de <span>Reacciones</span></h1>
+    <p>Graba tu reacción en vertical 9:16 para Reels, TikTok y Shorts.</p>
+  </header>
+
+  <div id="instalar" class="instalar" hidden>
+    <p id="instalarTxt"></p>
+    <button id="instalarBtn" class="btn" hidden>Instalar</button>
+    <button id="instalarCerrar" class="cerrar" aria-label="Cerrar">✕</button>
+  </div>
+
+  <button id="nueva" class="btn-grande">
+    <span class="punto"></span> Nueva reacción
+  </button>
+
+  <section class="tomas">
+    <h2>Tus grabaciones</h2>
+    <p id="vacio" class="vacio">Aún no tienes grabaciones. Toca <b>Nueva reacción</b> para empezar.</p>
+    <ul id="lista"></ul>
+  </section>
+</main>
+
+<!-- ===== Estudio ===== -->
+<section id="estudio" class="pantalla" hidden>
+  <div class="barra-sup">
+    <button id="volver" class="ico" aria-label="Volver">‹</button>
+    <div id="rec" class="rec" hidden><span></span><b id="tiempo">0:00</b></div>
+    <div class="der">
+      <button id="espejo" class="ico" aria-label="Espejo" title="Espejo">⇋</button>
+      <button id="girar" class="ico" aria-label="Cambiar cámara" title="Cambiar cámara">⟲</button>
+    </div>
+  </div>
+
+  <div id="escenario">
+    <canvas id="lienzo" width="1080" height="1920"></canvas>
+    <div id="aviso" class="aviso"></div>
+  </div>
+
+  <div class="barra-inf">
+    <label class="lado">
+      <input id="archivo" type="file" accept="video/*" hidden>
+      <span class="ico-txt">🎞</span><small>Video</small>
+    </label>
+    <button id="grabar" class="grabar" aria-label="Grabar"><span></span></button>
+    <button id="play" class="lado" disabled>
+      <span id="playIco" class="ico-txt">▶</span><small id="playTxt">Reproducir</small>
+    </button>
+  </div>
+  <p class="pista" id="pista">Mueve y haz zoom con los dedos. Arrastra la línea del medio para cambiar el tamaño. Doble toque para restablecer.</p>
+</section>
+
+<!-- ===== Ver grabación ===== -->
+<section id="visor" class="pantalla" hidden>
+  <div class="barra-sup">
+    <button id="cerrarVisor" class="ico" aria-label="Cerrar">‹</button>
+    <b id="visorTitulo"></b>
+    <span class="ico"></span>
+  </div>
+  <video id="visorVideo" playsinline controls></video>
+  <div class="acciones">
+    <button id="compartir" class="btn">Guardar / Compartir</button>
+    <button id="borrar" class="btn sec">Borrar</button>
+  </div>
+</section>
+
+<div id="toast" class="toast" hidden></div>
+
+<script src="app.js"></script>
+</body>
+</html>

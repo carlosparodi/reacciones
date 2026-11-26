@@ -1,0 +1,105 @@
+/* Mismo estilo que la versión de escritorio: grafito cálido y dorado champán,
+   letra Manrope y títulos en Instrument Serif. El rojo es solo para grabar. */
+:root{
+  --fondo:#0b0b0c; --panel:#151517; --raise:#1d1c1f; --texto:#f2efe9; --suave:#a39e95;
+  --hair:rgba(255,255,255,.075); --hair-2:rgba(255,255,255,.13);
+  --oro:#d8b46a; --oro-hi:#ecd19a; --oro-tinta:#1c1608; --rojo:#ff3b3b;
+  --body:"Manrope",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --serif:"Instrument Serif",Georgia,serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --ease:cubic-bezier(.22,1,.36,1);
+  --st:env(safe-area-inset-top,0px); --sb:env(safe-area-inset-bottom,0px);
+  color-scheme:dark;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--fondo);color:var(--texto);
+  font:15px/1.5 var(--body);-webkit-font-smoothing:antialiased;font-feature-settings:"ss01","cv11";overscroll-behavior:none}
+::selection{background:rgba(216,180,106,.32);color:#fff}
+button{font:600 15px var(--body);color:inherit;background:none;border:0;cursor:pointer;letter-spacing:.005em;
+  transition:background .18s var(--ease),border-color .18s var(--ease),transform .12s var(--ease)}
+button:focus-visible{outline:2px solid var(--oro);outline-offset:2px}
+[hidden]{display:none!important}
+
+.pantalla{position:fixed;inset:0;display:flex;flex-direction:column}
+
+/* Inicio */
+#inicio{padding:calc(var(--st) + 28px) 18px calc(var(--sb) + 18px);overflow-y:auto;gap:22px}
+.cab h1{margin:0;font:400 40px/1 var(--serif);letter-spacing:-.015em;color:#f4f0e8}
+.cab h1 span{color:var(--oro);font-style:italic}
+.cab p{margin:10px 0 0;color:var(--suave)}
+
+/* Botón principal: dorado, como "Reaccionar" en el escritorio */
+.btn-grande{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;padding:18px;
+  border-radius:14px;font-size:17px;font-weight:800;letter-spacing:.01em;
+  background:linear-gradient(180deg,#e9cb8a,#c9a157);color:var(--oro-tinta);border:1px solid #d3ad62;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 12px 28px -14px rgba(216,180,106,.75)}
+.btn-grande:active{transform:translateY(1px)}
+.punto{width:12px;height:12px;border-radius:50%;background:var(--rojo);box-shadow:0 0 0 3px rgba(28,22,8,.18)}
+
+/* Tarjeta de grabaciones */
+.tomas{background:linear-gradient(180deg,#171719,#141416);border:1px solid var(--hair);border-radius:16px;padding:16px}
+.tomas h2{font:700 11px var(--body);text-transform:uppercase;letter-spacing:.16em;color:var(--suave);margin:0 0 12px}
+.vacio{color:var(--suave);margin:0}
+#lista{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
+#lista li{position:relative;border-radius:13px;overflow:hidden;background:#111113;border:1px solid var(--hair);aspect-ratio:9/16}
+#lista video{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
+#lista .info{position:absolute;left:0;right:0;bottom:0;padding:24px 10px 8px;font:600 12px var(--body);
+  background:linear-gradient(transparent,#000c)}
+
+/* Barras */
+.barra-sup{display:flex;align-items:center;justify-content:space-between;
+  padding:calc(var(--st) + 6px) 10px 6px;gap:8px;z-index:2}
+.barra-sup b{font:700 15px var(--body)}
+.barra-sup .der{display:flex;gap:6px}
+.ico{width:44px;height:44px;border-radius:12px;font-size:22px;display:grid;place-items:center;
+  background:rgba(12,12,13,.72);border:1px solid var(--hair-2);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+span.ico{background:none;border:0}
+.ico.on{background:linear-gradient(180deg,#e9cb8a,#c9a157);color:var(--oro-tinta);border-color:#d3ad62}
+.rec{display:flex;align-items:center;gap:8px;padding:5px 12px;border-radius:999px;
+  background:rgba(10,10,11,.72);border:1px solid var(--hair);font:500 13px var(--mono);letter-spacing:.04em;font-variant-numeric:tabular-nums}
+.rec span{width:9px;height:9px;border-radius:50%;background:var(--rojo);animation:lat 1s steps(2) infinite}
+.rec b{font-weight:500}
+@keyframes lat{50%{opacity:.25}}
+
+/* Estudio */
+#escenario{flex:1;min-height:0;display:grid;place-items:center;position:relative;padding:4px 14px}
+#lienzo{max-width:100%;max-height:100%;aspect-ratio:9/16;border-radius:18px;background:#000;touch-action:none;
+  box-shadow:0 0 0 1px var(--hair),0 0 0 7px #111113,0 0 0 8px var(--hair)}
+#estudio.grabando #lienzo{box-shadow:0 0 0 2px #ff4d4d,0 0 0 7px #111113,0 0 0 8px rgba(255,77,77,.35)}
+.aviso{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);max-width:78%;text-align:center;
+  color:var(--suave);pointer-events:none}
+.barra-inf{display:flex;align-items:center;justify-content:space-around;padding:14px 16px 6px}
+.lado{width:76px;display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--texto)}
+.lado:disabled{opacity:.4}
+.lado small{font:600 12px var(--body);color:var(--suave)}
+.ico-txt{font-size:24px;width:52px;height:52px;border-radius:14px;display:grid;place-items:center;
+  background:linear-gradient(180deg,#242327,#1c1b1e);border:1px solid var(--hair);box-shadow:inset 0 1px 0 rgba(255,255,255,.05)}
+.grabar{width:78px;height:78px;border-radius:50%;border:3px solid #f2efe9;display:grid;place-items:center}
+.grabar span{width:58px;height:58px;border-radius:50%;background:linear-gradient(180deg,#ff5c5c,#e03a3a);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.25);transition:.2s var(--ease)}
+.grabar.on{border-color:#ff5c5c}
+.grabar.on span{width:30px;height:30px;border-radius:8px}
+.pista{margin:0;padding:4px 20px calc(var(--sb) + 10px);text-align:center;font-size:12px;color:var(--suave)}
+
+/* Visor */
+#visor video{flex:1;min-height:0;width:100%;background:#000}
+.acciones{display:flex;gap:10px;padding:12px 16px calc(var(--sb) + 12px)}
+.btn{flex:1;padding:15px;border-radius:13px;font-weight:700;
+  background:linear-gradient(180deg,#e9cb8a,#c9a157);color:var(--oro-tinta);border:1px solid #d3ad62;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 10px 24px -14px rgba(216,180,106,.7)}
+.btn:active{transform:translateY(1px)}
+.btn.sec{flex:0 0 auto;background:linear-gradient(180deg,rgba(255,77,77,.09),rgba(255,77,77,.04));
+  border-color:rgba(255,77,77,.55);color:#ff6b6b;box-shadow:none}
+
+.toast{position:fixed;left:16px;right:16px;bottom:calc(var(--sb) + 110px);padding:12px 16px;border-radius:12px;
+  background:rgba(10,10,11,.88);border:1px solid var(--hair-2);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  text-align:center;z-index:9}
+
+/* Aviso para instalar en la pantalla de inicio */
+.instalar{position:relative;display:flex;flex-direction:column;gap:10px;padding:14px 46px 14px 16px;
+  border-radius:16px;background:linear-gradient(180deg,#1b1915,#151412);border:1px solid rgba(216,180,106,.35)}
+.instalar p{margin:0;font-size:14.5px}
+.instalar p b{color:var(--oro-hi)}
+.instalar .btn{flex:none;align-self:flex-start;padding:10px 18px}
+.instalar .cerrar{position:absolute;top:8px;right:8px;width:32px;height:32px;border-radius:50%;color:var(--suave)}
+.ico-compartir{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:6px;background:rgba(216,180,106,.16);color:var(--oro-hi);font-size:13px}
