@@ -19,6 +19,27 @@
 </head>
 <body>
 
+<!-- Íconos (se usan con <svg><use href="#i-..."></svg>) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-girar" viewBox="0 0 24 24"><path d="M4 8.5h3l1.6-2.2h6.8L17 8.5h3v10H4z"/><path d="M9.2 13.4a2.9 2.9 0 0 1 5-1.9m.6 1.9a2.9 2.9 0 0 1-5 1.9"/><path d="M14.4 10.2v1.5h-1.5M9.6 16.6v-1.5h1.5"/></symbol>
+    <symbol id="i-espejo" viewBox="0 0 24 24"><path d="M12 3.5v17" stroke-dasharray="2 2.2"/><path d="M9 7.5 4 17h5zM15 7.5l5 9.5h-5z"/></symbol>
+    <symbol id="i-abajo" viewBox="0 0 24 24"><rect x="5" y="3.5" width="14" height="7.5" rx="1.6"/><rect x="5" y="13" width="14" height="7.5" rx="1.6" fill="currentColor" fill-opacity=".28"/><circle cx="12" cy="16.1" r="1.3"/><path d="M9.6 19.2a2.6 2.6 0 0 1 4.8 0"/></symbol>
+    <symbol id="i-arriba" viewBox="0 0 24 24"><rect x="5" y="3.5" width="14" height="7.5" rx="1.6" fill="currentColor" fill-opacity=".28"/><rect x="5" y="13" width="14" height="7.5" rx="1.6"/><circle cx="12" cy="6.6" r="1.3"/><path d="M9.6 9.7a2.6 2.6 0 0 1 4.8 0"/></symbol>
+    <symbol id="i-intro" viewBox="0 0 24 24"><circle cx="12" cy="8.2" r="3.3"/><path d="M5.5 20a6.5 6.5 0 0 1 13 0"/></symbol>
+    <symbol id="i-fondo" viewBox="0 0 24 24"><rect x="3.5" y="4" width="17" height="16" rx="2.2"/><path d="M3.5 15.5l4.5-4 3.5 3"/><circle cx="14.5" cy="11" r="2.4"/><path d="M10 20a4.5 4.5 0 0 1 9 0"/></symbol>
+    <symbol id="i-ajustes" viewBox="0 0 24 24"><path d="M4 6.5h9M17 6.5h3M4 12h3M11 12h9M4 17.5h11M19 17.5h1"/><circle cx="15" cy="6.5" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="17.5" r="2"/></symbol>
+    <symbol id="i-video" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="2.2"/><path d="M3.5 9h17M3.5 15h17M8 5v4M16 5v4M8 15v4M16 15v4"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor"/></symbol>
+    <symbol id="i-pausa" viewBox="0 0 24 24"><path d="M8 5.5h2.6v13H8zM13.4 5.5H16v13h-2.6z" fill="currentColor"/></symbol>
+    <symbol id="i-repetir" viewBox="0 0 24 24"><path d="M5 12a7 7 0 1 0 2.1-5"/><path d="M5 4.5V9h4.5"/></symbol>
+    <symbol id="i-solo" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></symbol>
+    <symbol id="i-dividir" viewBox="0 0 24 24"><rect x="5" y="3.5" width="14" height="17" rx="2"/><path d="M5 12h14"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+    <symbol id="i-atras" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
+  </defs>
+</svg>
+
 <!-- ===== Inicio ===== -->
 <main id="inicio" class="pantalla">
   <header class="cab">
@@ -41,43 +62,192 @@
     <p id="vacio" class="vacio">Aún no tienes grabaciones. Toca <b>Nueva reacción</b> para empezar.</p>
     <ul id="lista"></ul>
   </section>
+
+  <details class="guia">
+    <summary>Cómo se usa</summary>
+    <ol>
+      <li>Toca <b>Nueva reacción</b> y permite la cámara y el micrófono.</li>
+      <li>Toca <b>Video</b> y elige de tu galería el video que vas a comentar.</li>
+      <li>Toca el botón rojo para grabar. Si tienes la <b>Intro</b> activada, empiezas tú en pantalla completa para presentarte.</li>
+      <li>Toca <b>▶</b>: el video aparece arriba y tú abajo. Tócalo otra vez para pausar y opinar.</li>
+      <li>Con los dedos mueves y haces zoom en cada parte. Arrastra la línea blanca para cambiar el tamaño. Doble toque restablece.</li>
+      <li>Toca el botón rojo para terminar. La grabación queda aquí; ábrela para guardarla en Fotos o compartirla.</li>
+    </ol>
+    <p>En la barra de la derecha del estudio cambias la cámara, el espejo, dónde sales tú, la introducción y tu fondo. En <b>Ajustes</b> está todo lo demás: sonido, recorte del video, marca de agua y subtítulos.</p>
+  </details>
 </main>
 
 <!-- ===== Estudio ===== -->
 <section id="estudio" class="pantalla" hidden>
   <div class="barra-sup">
-    <button id="volver" class="ico" aria-label="Volver">‹</button>
+    <button id="volver" class="ico" aria-label="Volver"><svg><use href="#i-atras"/></svg></button>
     <div id="rec" class="rec" hidden><span></span><b id="tiempo">0:00</b></div>
-    <div class="der">
-      <button id="espejo" class="ico" aria-label="Espejo" title="Espejo">⇋</button>
-      <button id="girar" class="ico" aria-label="Cambiar cámara" title="Cambiar cámara">⟲</button>
-    </div>
+    <span class="ico vacio-ico"></span>
   </div>
 
   <div id="escenario">
-    <canvas id="lienzo" width="1080" height="1920"></canvas>
-    <div id="aviso" class="aviso"></div>
+    <div id="marco">
+      <canvas id="lienzo" width="1080" height="1920"></canvas>
+      <div id="aviso" class="aviso"></div>
+      <div id="etiqueta" class="etiqueta" hidden></div>
+
+      <!-- Herramientas rápidas, como en TikTok o Instagram -->
+      <nav class="riel" aria-label="Herramientas">
+        <button id="rGirar" class="r"><i><svg><use href="#i-girar"/></svg></i><small>Girar</small></button>
+        <button id="rEspejo" class="r"><i><svg><use href="#i-espejo"/></svg></i><small>Espejo</small></button>
+        <button id="rLugar" class="r"><i><svg><use id="rLugarIco" href="#i-abajo"/></svg></i><small id="rLugarTxt">Yo abajo</small></button>
+        <button id="rIntro" class="r"><i><svg><use href="#i-intro"/></svg></i><small>Intro</small></button>
+        <button id="rFondo" class="r"><i><svg><use href="#i-fondo"/></svg></i><small>Fondo</small></button>
+        <button id="rAjustes" class="r"><i><svg><use href="#i-ajustes"/></svg></i><small>Ajustes</small></button>
+      </nav>
+    </div>
+  </div>
+
+  <div id="filaVideo" class="fila-video" hidden>
+    <button id="quitar" class="mini-ico" aria-label="Quitar este video" title="Quitar este video"><svg><use href="#i-x"/></svg></button>
+    <span id="tAct" class="t">0:00</span>
+    <input id="barra" type="range" min="0" max="1000" value="0" aria-label="Posición del video">
+    <span id="tDur" class="t">0:00</span>
+    <button id="solo" class="mini-ico" aria-label="Salir yo solo" title="En pausa: salir tú solo o ver el video"><svg><use id="soloIco" href="#i-solo"/></svg></button>
   </div>
 
   <div class="barra-inf">
     <label class="lado">
       <input id="archivo" type="file" accept="video/*" hidden>
-      <span class="ico-txt">🎞</span><small>Video</small>
+      <span class="ico-txt"><svg><use href="#i-video"/></svg></span><small>Video</small>
     </label>
     <button id="grabar" class="grabar" aria-label="Grabar"><span></span></button>
     <button id="play" class="lado" disabled>
-      <span id="playIco" class="ico-txt">▶</span><small id="playTxt">Reproducir</small>
+      <span class="ico-txt"><svg><use id="playIco" href="#i-play"/></svg></span><small id="playTxt">Reproducir</small>
     </button>
   </div>
-  <p class="pista" id="pista">Mueve y haz zoom con los dedos. Arrastra la línea del medio para cambiar el tamaño. Doble toque para restablecer.</p>
+  <p class="pista" id="pista"></p>
 </section>
+
+<!-- ===== Hoja de ajustes ===== -->
+<div id="hoja" class="hoja" hidden>
+  <div class="hoja-fondo" data-cerrar></div>
+  <div class="hoja-caja" role="dialog" aria-modal="true" aria-label="Ajustes">
+    <div class="hoja-cab" id="hojaCab">
+      <div class="asa"></div>
+      <nav class="pestanas" id="pestanas" role="tablist">
+        <button data-tab="grabar" role="tab">Grabación</button>
+        <button data-tab="encuadre" role="tab">Encuadre</button>
+        <button data-tab="sonido" role="tab">Sonido</button>
+        <button data-tab="video" role="tab">Video</button>
+        <button data-tab="fondo" role="tab">Tu fondo</button>
+        <button data-tab="marca" role="tab">Marca de agua</button>
+        <button data-tab="subs" role="tab">Subtítulos</button>
+      </nav>
+      <button class="cerrar-hoja" data-cerrar aria-label="Cerrar"><svg><use href="#i-x"/></svg></button>
+    </div>
+
+    <div class="hoja-cuerpo">
+      <!-- Grabación -->
+      <section data-panel="grabar">
+        <label class="op"><span><b>Empezar con introducción</b><small>Sales tú en pantalla completa para presentarte y el video arranca cuando tocas ▶. Apágala para que el video empiece apenas grabas.</small></span><input type="checkbox" class="sw" data-a="intro"></label>
+        <div class="op col"><span><b>Al pausar el video</b><small>Lo que se ve mientras opinas. En pausa también lo cambias con el botón de la derecha de la barra del video.</small></span>
+          <div class="seg" data-a="pausa"><button data-v="completa">Salgo yo solo</button><button data-v="quieto">El video se queda</button></div></div>
+        <div class="op col"><span><b>Dónde sales tú</b></span>
+          <div class="seg" data-a="arriba"><button data-v="false">Abajo (video arriba)</button><button data-v="true">Arriba (video abajo)</button></div></div>
+        <div class="op col"><span><b>Cámara</b></span>
+          <div class="seg" data-a="facing"><button data-v="user">Frontal</button><button data-v="environment">Trasera</button></div></div>
+        <label class="op"><span><b>Efecto espejo</b><small>Te ves como en un espejo. La grabación sale igual a como te ves.</small></span><input type="checkbox" class="sw" data-a="espejo"></label>
+        <button class="btn-linea" id="restablecer">Restablecer todos los ajustes</button>
+      </section>
+
+      <!-- Encuadre -->
+      <section data-panel="encuadre" hidden>
+        <p class="nota">También con los dedos sobre la pantalla: arrastra para mover, pellizca para el zoom y doble toque para restablecer.</p>
+        <label class="campo"><span>Tu espacio en pantalla dividida <output id="vEspacio"></output></span><input type="range" id="espacio" min="20" max="80"></label>
+        <label class="campo"><span>Zoom del video <output id="vZVid"></output></span><input type="range" id="zVid" min="50" max="300"></label>
+        <label class="campo"><span>Zoom de tu cámara <output id="vZCam"></output></span><input type="range" id="zCam" min="30" max="300"></label>
+        <div class="botones"><button class="btn-linea" id="centrarVid">Centrar video</button><button class="btn-linea" id="centrarCam">Centrar cámara</button></div>
+        <div class="op col"><span><b>Cuando sales tú solo</b><small>Cómo te ves al presentarte, al pausar y al final.</small></span>
+          <div class="seg" data-a="soloEncuadre"><button data-v="cerca">Cerca</button><button data-v="normal">Normal</button><button data-v="lejos">Lejos</button></div></div>
+      </section>
+
+      <!-- Sonido -->
+      <section data-panel="sonido" hidden>
+        <label class="campo"><span>Volumen del video <output data-de="volVideo"></output></span><input type="range" min="0" max="100" data-a="volVideo"></label>
+        <label class="campo"><span>Volumen de tu voz en la grabación <output data-de="volVoz"></output></span><input type="range" min="0" max="200" data-a="volVoz"></label>
+        <div class="medidor"><span>Nivel de tu micrófono</span><div class="m"><i id="medidor"></i></div></div>
+        <label class="op"><span><b>Evitar que el video se oiga doble</b><small>Si el video suena por el parlante, el micrófono lo capta otra vez. Esto quita ese eco. Con audífonos no hace falta.</small></span><input type="checkbox" class="sw" data-a="eco"></label>
+        <label class="op"><span><b>Reducir ruido de fondo</b><small>Quita ruidos constantes como un ventilador, pero puede dejar la voz más opaca.</small></span><input type="checkbox" class="sw" data-a="ruido"></label>
+        <p class="nota">Con audífonos tu voz y el video se oyen más limpios.</p>
+      </section>
+
+      <!-- Video: fondo y recorte -->
+      <section data-panel="video" hidden>
+        <div class="op col"><span><b>Fondo detrás del video</b><small>Con "Llenar" el video ocupa todo su espacio. Con un fondo se ve entero encima del fondo.</small></span>
+          <div class="seg s4" data-a="vFondo"><button data-v="lleno">Llenar</button><button data-v="negro">Negro</button><button data-v="desenfocado">Borroso</button><button data-v="imagen">Imagen</button></div>
+          <button class="btn-linea" id="cambiarFondoVideo" hidden>Cambiar imagen…</button>
+          <input type="file" id="fondoVideoArchivo" accept="image/*" hidden></div>
+        <label class="campo" id="campoTam"><span>Tamaño del video <output data-de="vTam"></output></span><input type="range" min="50" max="100" data-a="vTam"></label>
+        <label class="campo"><span>Recortar los lados <output data-de="vRecX"></output></span><input type="range" min="0" max="40" data-a="vRecX"></label>
+        <label class="campo"><span>Recortar arriba y abajo <output data-de="vRecY"></output></span><input type="range" min="0" max="40" data-a="vRecY"></label>
+        <p class="nota">Los recortes quitan las franjas que el video ya trae (textos, barras o fondos).</p>
+        <button class="btn-linea" id="quitarRecortes">Quitar recortes</button>
+      </section>
+
+      <!-- Tu fondo -->
+      <section data-panel="fondo" hidden>
+        <p class="nota">Tu silueta se recorta y apareces delante del fondo. La primera vez necesita internet para preparar el recorte.</p>
+        <div class="seg fondos" data-a="fondo">
+          <button data-v="ninguno"><i class="f-ninguno"></i>Ninguno</button>
+          <button data-v="desenfocado"><i class="f-borroso"></i>Borroso</button>
+          <button data-v="grafito"><i class="f-grafito"></i>Grafito</button>
+          <button data-v="dorado"><i class="f-dorado"></i>Dorado</button>
+          <button data-v="noche"><i class="f-noche"></i>Noche</button>
+          <button data-v="galeria"><i class="f-galeria" id="miniGaleria">＋</i>Galería</button>
+        </div>
+        <button class="btn-linea" id="cambiarFondoCam" hidden>Cambiar foto o video…</button>
+        <input type="file" id="fondoCamArchivo" accept="image/*,video/*" hidden>
+        <p class="estado" id="segEstado" hidden></p>
+      </section>
+
+      <!-- Marca de agua -->
+      <section data-panel="marca" hidden>
+        <label class="op"><span><b>Poner mi marca de agua</b><small>Queda en todas tus grabaciones. Mírala en la pantalla mientras la ajustas.</small></span><input type="checkbox" class="sw" data-a="marca.on"></label>
+        <div class="op col"><span><b>Tipo</b></span>
+          <div class="seg" data-a="marca.tipo"><button data-v="texto">Aa Texto</button><button data-v="logo">Imagen o logo</button></div></div>
+        <div id="marcaTexto">
+          <label class="campo"><span>Tu texto</span><input type="text" class="texto" data-a="marca.texto" maxlength="40" placeholder="@tucanal" autocomplete="off"></label>
+          <div class="op col"><span><b>Estilo</b></span>
+            <div class="seg" data-a="marca.estilo"><button data-v="sombra">Sombra</button><button data-v="contorno">Contorno</button><button data-v="caja">Con caja</button></div></div>
+        </div>
+        <div id="marcaLogo" hidden>
+          <button class="btn-linea" id="elegirLogo">Elegir imagen…</button>
+          <p class="nota" id="logoNota">Una imagen PNG con fondo transparente queda mejor.</p>
+          <input type="file" id="logoArchivo" accept="image/*" hidden>
+        </div>
+        <div class="op col"><span><b>Posición</b></span>
+          <div class="seg pos" data-a="marca.pos">
+            <button data-v="tl" aria-label="Arriba a la izquierda">↖</button><button data-v="tc" aria-label="Arriba al centro">↑</button><button data-v="tr" aria-label="Arriba a la derecha">↗</button>
+            <button data-v="cl" aria-label="Al medio a la izquierda">←</button><button data-v="c" aria-label="Al centro">•</button><button data-v="cr" aria-label="Al medio a la derecha">→</button>
+            <button data-v="bl" aria-label="Abajo a la izquierda">↙</button><button data-v="bc" aria-label="Abajo al centro">↓</button><button data-v="br" aria-label="Abajo a la derecha">↘</button>
+          </div></div>
+        <label class="campo"><span>Tamaño <output data-de="marca.tam"></output></span><input type="range" min="8" max="70" data-a="marca.tam"></label>
+        <label class="campo"><span>Opacidad <output data-de="marca.op"></output></span><input type="range" min="15" max="100" data-a="marca.op"></label>
+      </section>
+
+      <!-- Subtítulos -->
+      <section data-panel="subs" hidden>
+        <label class="op"><span><b>Subtítulos en vivo</b><small>Lo que dices aparece escrito en la pantalla y queda en la grabación. Usa el reconocimiento de voz del celular (necesita internet).</small></span><input type="checkbox" class="sw" data-a="subs.on"></label>
+        <div class="op col"><span><b>Estilo</b></span>
+          <div class="seg" data-a="subs.estilo"><button data-v="blanco">Blanco</button><button data-v="amarillo">Amarillo</button><button data-v="caja">Caja negra</button></div></div>
+        <p class="nota" id="subsNota">Pruébalo antes de una grabación importante: en algunos celulares el reconocimiento de voz puede cortar el sonido del micrófono.</p>
+      </section>
+    </div>
+  </div>
+</div>
 
 <!-- ===== Ver grabación ===== -->
 <section id="visor" class="pantalla" hidden>
   <div class="barra-sup">
-    <button id="cerrarVisor" class="ico" aria-label="Cerrar">‹</button>
+    <button id="cerrarVisor" class="ico" aria-label="Cerrar"><svg><use href="#i-atras"/></svg></button>
     <b id="visorTitulo"></b>
-    <span class="ico"></span>
+    <span class="ico vacio-ico"></span>
   </div>
   <video id="visorVideo" playsinline controls></video>
   <div class="acciones">

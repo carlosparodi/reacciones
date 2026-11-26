@@ -4,14 +4,35 @@ Versión para **iPhone y Android** que se comparte con **un link por WhatsApp** 
 
 ## Qué hace
 
-- Eliges el video que vas a comentar desde la galería del celular.
-- Te grabas con la cámara frontal (o la trasera) en vertical 9:16: el video va arriba y tú abajo.
-- Al pausar apareces en pantalla completa, y cuando el video termina también, para cerrar con tu conclusión.
-- Con los dedos mueves y haces zoom en cada parte. Arrastrando la línea del medio cambias el tamaño. Con doble toque se restablece.
-- Las grabaciones quedan guardadas en el celular. Con **Guardar / Compartir** las guardas en Fotos o las mandas a TikTok, Instagram o WhatsApp.
-- Después de abrirla una vez, funciona **sin internet**.
+Tiene las opciones del estudio de escritorio, ordenadas para el celular:
 
-No trae lo que en el PC hacen yt-dlp, FFmpeg y Whisper: descargar por link, subtítulos automáticos, el editor tipo CapCut ni la exportación a CapCut.
+**Barra de la derecha del estudio** (lo que más se usa, a un toque)
+- **Girar**: cámara frontal o trasera. **Espejo**: te ves como en un espejo.
+- **Yo abajo / Yo arriba**: dónde sales tú y dónde el video.
+- **Intro**: con ella, al grabar sales tú en pantalla completa para presentarte y el video arranca cuando tocas ▶. Sin ella, el video empieza apenas grabas.
+- **Fondo**: pone un fondo detrás de ti recortando tu silueta (borroso, grafito, dorado, noche o una foto o video de tu galería).
+- **Ajustes**: todo lo demás, en pestañas.
+
+**Barra del video** (aparece al elegir un video): quitar el video, adelantar o retroceder, y en pausa el botón para salir tú solo o ver el video.
+
+**Ajustes**
+- *Grabación*: introducción, qué pasa al pausar (sales tú solo o el video se queda quieto), dónde sales tú, cámara, espejo y restablecer todo.
+- *Encuadre*: tu espacio en pantalla dividida, zoom del video y de tu cámara, centrar, y cómo te ves cuando sales tú solo (cerca, normal o lejos).
+- *Sonido*: volumen del video, volumen de tu voz, medidor del micrófono, evitar que el video se oiga doble y reducir ruido.
+- *Video*: fondo detrás del video (llenar, negro, borroso o una imagen), tamaño del video y recortes de los lados y de arriba y abajo.
+- *Tu fondo*: el mismo de la barra de la derecha.
+- *Marca de agua*: texto (sombra, contorno o caja) o tu logo, con posición, tamaño y opacidad. Queda en todas tus grabaciones.
+- *Subtítulos*: lo que dices aparece escrito y queda en la grabación (usa el reconocimiento de voz del celular).
+
+Mientras ajustas, la vista previa se achica encima de la hoja para que veas el resultado entero. Los ajustes, tu logo y tus fondos quedan guardados en el celular.
+
+Además:
+- Con los dedos mueves y haces zoom en cada parte. Arrastrando la línea blanca cambias el tamaño. Con doble toque se restablece.
+- Las grabaciones quedan guardadas en el celular. Con **Guardar / Compartir** las guardas en Fotos o las mandas a TikTok, Instagram o WhatsApp.
+- La pantalla no se apaga mientras estás en el estudio.
+- Después de abrirla una vez, funciona **sin internet** (el recorte de silueta y los subtítulos necesitan internet la primera vez o mientras los usas).
+
+No trae lo que en el PC depende del computador: usar la cámara del celular (ya estás en él), descargar por link (yt-dlp), subtítulos con Whisper, el editor tipo CapCut ni la exportación a CapCut.
 
 ## 1. Dónde está publicada
 
@@ -37,7 +58,7 @@ La app misma muestra estas instrucciones arriba la primera vez.
 ## 3. Actualizarla
 
 1. Cambia lo que quieras en esta carpeta.
-2. En `sw.js` sube el número de versión (`reacciones-v2` → `reacciones-v3`).
+2. En `sw.js` sube el número de versión (`reacciones-v3` → `reacciones-v4`).
 3. Súbela a GitHub desde esta carpeta:
 
 ```powershell

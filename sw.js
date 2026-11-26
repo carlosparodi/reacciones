@@ -1,7 +1,8 @@
 // Guarda la app en el teléfono para que abra sin internet.
 // Al cambiar cualquier archivo, sube el número de VERSION para que los teléfonos tomen la nueva.
-const VERSION = 'reacciones-v2';
+const VERSION = 'reacciones-v3';
 const LETRAS = 'reacciones-letras';
+const MODELOS = 'reacciones-modelos';   // recorte de silueta (MediaPipe), se guarda la primera vez
 const ARCHIVOS = ['./', 'index.html', 'app.js', 'estilos.css', 'manifest.webmanifest',
   'iconos/icono-180.png', 'iconos/icono-192.png', 'iconos/icono-512.png'];
 
@@ -10,7 +11,7 @@ self.addEventListener('install', e => {
 });
 self.addEventListener('activate', e => {
   e.waitUntil(caches.keys()
-    .then(ks => Promise.all(ks.filter(k => k !== VERSION && k !== LETRAS).map(k => caches.delete(k))))
+    .then(ks => Promise.all(ks.filter(k => k !== VERSION && k !== LETRAS && k !== MODELOS).map(k => caches.delete(k))))
     .then(() => self.clients.claim()));
 });
 self.addEventListener('fetch', e => {
@@ -20,6 +21,11 @@ self.addEventListener('fetch', e => {
   if (url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com'){
     e.respondWith(caches.open(LETRAS).then(c => c.match(e.request).then(guardada => guardada ||
       fetch(e.request).then(r => { c.put(e.request, r.clone()); return r; }))));
+    return;
+  }
+  if (url.hostname === 'cdn.jsdelivr.net' || url.hostname === 'storage.googleapis.com'){
+    e.respondWith(caches.open(MODELOS).then(c => c.match(e.request).then(guardada => guardada ||
+      fetch(e.request).then(r => { if (r.ok) c.put(e.request, r.clone()); return r; }))));
     return;
   }
   if (url.origin !== location.origin) return;
