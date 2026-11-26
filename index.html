@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@500&display=swap">
-<link rel="stylesheet" href="estilos.css">
+<link rel="stylesheet" href="estilos.css?v=4">
 </head>
 <body>
 
@@ -90,6 +90,11 @@
       <canvas id="lienzo" width="1080" height="1920"></canvas>
       <div id="aviso" class="aviso"></div>
       <div id="etiqueta" class="etiqueta" hidden></div>
+      <div class="zoom-cam" aria-label="Zoom de tu cámara">
+        <button id="zMenos" aria-label="Alejar tu cámara">−</button>
+        <span id="zTxt">100%</span>
+        <button id="zMas" aria-label="Acercar tu cámara">+</button>
+      </div>
 
       <!-- Herramientas rápidas, como en TikTok o Instagram -->
       <nav class="riel" aria-label="Herramientas">
@@ -161,7 +166,7 @@
         <p class="nota">También con los dedos sobre la pantalla: arrastra para mover, pellizca para el zoom y doble toque para restablecer.</p>
         <label class="campo"><span>Tu espacio en pantalla dividida <output id="vEspacio"></output></span><input type="range" id="espacio" min="20" max="80"></label>
         <label class="campo"><span>Zoom del video <output id="vZVid"></output></span><input type="range" id="zVid" min="50" max="300"></label>
-        <label class="campo"><span>Zoom de tu cámara <output id="vZCam"></output></span><input type="range" id="zCam" min="30" max="300"></label>
+        <label class="campo"><span>Zoom de tu cámara <output id="vZCam"></output></span><input type="range" id="zCam" min="50" max="500"></label>
         <div class="botones"><button class="btn-linea" id="centrarVid">Centrar video</button><button class="btn-linea" id="centrarCam">Centrar cámara</button></div>
         <div class="op col"><span><b>Cuando sales tú solo</b><small>Cómo te ves al presentarte, al pausar y al final.</small></span>
           <div class="seg" data-a="soloEncuadre"><button data-v="cerca">Cerca</button><button data-v="normal">Normal</button><button data-v="lejos">Lejos</button></div></div>
@@ -258,6 +263,6 @@
 
 <div id="toast" class="toast" hidden></div>
 
-<script src="app.js"></script>
+<script src="app.js?v=4"></script>
 </body>
 </html>

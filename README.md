@@ -58,7 +58,7 @@ La app misma muestra estas instrucciones arriba la primera vez.
 ## 3. Actualizarla
 
 1. Cambia lo que quieras en esta carpeta.
-2. En `sw.js` sube el número de versión (`reacciones-v3` → `reacciones-v4`).
+2. En `sw.js` sube el número de versión (`reacciones-v4` → `reacciones-v5`) y en `index.html` el número de `?v=` de `app.js` y `estilos.css`.
 3. Súbela a GitHub desde esta carpeta:
 
 ```powershell

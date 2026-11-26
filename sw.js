@@ -1,9 +1,9 @@
 // Guarda la app en el teléfono para que abra sin internet.
 // Al cambiar cualquier archivo, sube el número de VERSION para que los teléfonos tomen la nueva.
-const VERSION = 'reacciones-v3';
+const VERSION = 'reacciones-v4';
 const LETRAS = 'reacciones-letras';
 const MODELOS = 'reacciones-modelos';   // recorte de silueta (MediaPipe), se guarda la primera vez
-const ARCHIVOS = ['./', 'index.html', 'app.js', 'estilos.css', 'manifest.webmanifest',
+const ARCHIVOS = ['./', 'index.html', 'app.js?v=4', 'estilos.css?v=4', 'manifest.webmanifest',
   'iconos/icono-180.png', 'iconos/icono-192.png', 'iconos/icono-512.png'];
 
 self.addEventListener('install', e => {
@@ -29,8 +29,10 @@ self.addEventListener('fetch', e => {
     return;
   }
   if (url.origin !== location.origin) return;
-  // Primero intenta internet (para recibir cambios); si no hay, usa la copia guardada
-  e.respondWith(fetch(e.request).then(r => {
+  // Primero intenta internet sin usar copias viejas del navegador (así nunca se mezclan versiones);
+  // si no hay internet, usa la copia guardada
+  const fresca = e.request.mode === 'navigate' ? new Request(e.request.url, { cache: 'no-cache' }) : new Request(e.request, { cache: 'no-cache' });
+  e.respondWith(fetch(fresca).then(r => {
     const copia = r.clone(); caches.open(VERSION).then(c => c.put(e.request, copia)); return r;
   }).catch(() => caches.match(e.request, { ignoreSearch: true })));
 });
