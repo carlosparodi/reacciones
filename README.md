@@ -13,18 +13,11 @@ Versión para **iPhone y Android** que se comparte con **un link por WhatsApp** 
 
 No trae lo que en el PC hacen yt-dlp, FFmpeg y Whisper: descargar por link, subtítulos automáticos, el editor tipo CapCut ni la exportación a CapCut.
 
-## 1. Publicarla (una sola vez)
+## 1. Dónde está publicada
 
-La app tiene que estar en internet con **https** (el iPhone no deja usar la cámara sin https). Las dos formas gratis:
+**Link para compartir:** https://carlosparodi.github.io/reacciones/
 
-**Netlify Drop (la más fácil)**
-1. Entra a https://app.netlify.com/drop y crea una cuenta gratis.
-2. Arrastra la carpeta **`version-movil`** completa a la página.
-3. Te da un link tipo `https://nombre-raro.netlify.app`. En **Site configuration → Change site name** puedes ponerle uno más bonito.
-
-**GitHub Pages** (si el proyecto ya está en GitHub)
-1. En el repositorio: **Settings → Pages → Deploy from a branch**, rama `main`, carpeta `/ (root)`.
-2. El link queda así: `https://TU-USUARIO.github.io/TU-REPO/version-movil/`.
+Está en GitHub Pages, en el repositorio [carlosparodi/reacciones](https://github.com/carlosparodi/reacciones), que es público. Esta carpeta `version-movil` es ese mismo repositorio en el PC.
 
 ## 2. Compartirla por WhatsApp
 
@@ -45,9 +38,13 @@ La app misma muestra estas instrucciones arriba la primera vez.
 
 1. Cambia lo que quieras en esta carpeta.
 2. En `sw.js` sube el número de versión (`reacciones-v2` → `reacciones-v3`).
-3. Vuelve a publicarla igual que antes (en Netlify: **Deploys** → arrastra la carpeta otra vez).
+3. Súbela a GitHub desde esta carpeta:
 
-Los celulares toman la versión nueva la próxima vez que abran la app con internet. No hay que reinstalarla.
+```powershell
+git add -A; git commit -m "Cambios"; git push
+```
+
+En 1 o 2 minutos GitHub Pages publica la versión nueva en el mismo link. Los celulares la toman la próxima vez que abran la app con internet. No hay que reinstalarla.
 
 ## Probar en el PC
 
