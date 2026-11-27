@@ -94,7 +94,9 @@ const extras = { logo: null, fondoVideo: null, fondoCam: null };
 async function abrirCamara(){
   pararCamara();
   const pedir = c => navigator.mediaDevices.getUserMedia(c);
-  const video = { facingMode: A.facing, width: { ideal: 1080 }, height: { ideal: 1920 }, frameRate: { ideal: 30 } };
+  // 4:3 usa todo el sensor (como la cámara del teléfono en modo foto). Pedir 9:16 recorta los lados y se ve como con zoom.
+  // resizeMode 'none': que el navegador no recorte la imagen para ajustarla al tamaño pedido.
+  const video = { facingMode: A.facing, width: { ideal: 1920 }, height: { ideal: 1440 }, frameRate: { ideal: 30 }, resizeMode: 'none' };
   const audio = { echoCancellation: A.eco, noiseSuppression: A.ruido, autoGainControl: true };
   let st;
   try { st = await pedir({ video, audio }); }
@@ -279,8 +281,11 @@ function fondoCam(x, y, w, h){
 }
 function dibujarCam(x, y, w, h, t){
   const cw = cam.videoWidth, ch = cam.videoHeight; if (!cw) return;
-  if (t.z < 1) t.z = 1;   // tu cámara siempre llena su espacio: sin bordes
+  // Se puede alejar hasta verte completo; lo que sobra se rellena con tu misma imagen desenfocada
+  const zMin = Math.min(w / cw, h / ch) / Math.max(w / cw, h / ch);
+  if (t.z < zMin) t.z = zMin;
   const conFondo = A.fondo !== 'ninguno' && actualizarPersona();
+  if (!conFondo && t.z < 0.999) borroso(cam, 0, 0, cw, ch, x, y, w, h, A.espejo, 0.2);
   if (conFondo){
     fondoCam(x, y, w, h);
     encuadre(seg.persona, 0, 0, cw, ch, x, y, w, h, t, A.espejo, 'llenar');
@@ -449,7 +454,7 @@ cv.addEventListener('pointermove', e => {
     A.split = limitar(A.arriba ? 1 - c.y / H : c.y / H, 0.2, 0.8); s.topH = A.split * H; return;
   }
   const t = gesto.t, esVideo = t === s.vT;
-  const zMin = esVideo ? (A.vFondo === 'lleno' ? 1 : 0.5) : 1;
+  const zMin = esVideo ? (A.vFondo === 'lleno' ? 1 : 0.5) : 0.3;
   if (pts.length > 1 && gesto.d0) t.z = limitar(gesto.z0 * dist(pts) / gesto.d0, zMin, esVideo ? 5 : 6);
   const espejo = !esVideo && A.espejo ? -1 : 1;
   t.x = gesto.x0 + (c.x - gesto.c0.x) * espejo; t.y = gesto.y0 + (c.y - gesto.c0.y);
@@ -767,7 +772,7 @@ const zoomSolo = k => k === 'cerca' ? 1.6 : 1;
 
 // Botones − y + sobre la imagen: acercan o alejan tu cámara
 function zoomCam(f){
-  const t = camActual(); t.z = limitar(Math.round(t.z * f * 100) / 100, 1, 6);
+  const t = camActual(); t.z = limitar(Math.round(t.z * f * 100) / 100, 0.3, 6);
   if (Math.abs(t.z - 1) < 0.04) t.z = 1;
   guardar(); pintarControles();
 }
