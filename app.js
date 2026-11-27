@@ -10,7 +10,7 @@ const limitar = (v, a, b) => Math.max(a, Math.min(b, v));
 const RECO = window.SpeechRecognition || window.webkitSpeechRecognition;   // reconocimiento de voz (subtítulos)
 
 const W = 1080, H = 1920;
-const cv = $('lienzo'), ctx = cv.getContext('2d');
+const cv = $('lienzo'), ctx = cv.getContext('2d', { alpha: false });
 const vid = document.createElement('video');
 vid.playsInline = true; vid.setAttribute('playsinline', ''); vid.preload = 'auto';
 const cam = document.createElement('video');
@@ -58,7 +58,7 @@ function poner(k, v){
 const s = {
   topH: 0, camStream: null, hasVideo: false, ended: false, solo: false,
   vT: { z: 1, x: 0, y: 0 },
-  rec: null, recStart: 0, saver: null, audio: null, wake: null, sub: null,
+  rec: null, recStart: 0, saver: null, lienzoPista: null, audio: null, wake: null, sub: null,
 };
 
 /* ---------------- Utilidades ---------------- */
@@ -96,7 +96,7 @@ async function abrirCamara(){
   const pedir = c => navigator.mediaDevices.getUserMedia(c);
   // 4:3 usa todo el sensor (como la cámara del teléfono en modo foto). Pedir 9:16 recorta los lados y se ve como con zoom.
   // resizeMode 'none': que el navegador no recorte la imagen para ajustarla al tamaño pedido.
-  const video = { facingMode: A.facing, width: { ideal: 1920 }, height: { ideal: 1440 }, frameRate: { ideal: 30 }, resizeMode: 'none' };
+  const video = { facingMode: A.facing, width: { ideal: 1440 }, height: { ideal: 1080 }, frameRate: { ideal: 30 }, resizeMode: 'none' };
   const audio = { echoCancellation: A.eco, noiseSuppression: A.ruido, autoGainControl: true };
   let st;
   try { st = await pedir({ video, audio }); }
@@ -372,8 +372,14 @@ function dibujarSubs(camY, camH){
   ctx.restore();
 }
 
-let arrastrandoBarra = false, ultimoSeg = -1;
-function dibujar(){
+let arrastrandoBarra = false, ultimoSeg = -1, ultimoRec = -1, ultimoCuadro = 0, ultimaBarra = 0;
+// 30 cuadros por segundo: igual que la cámara y la grabación. Dibujar a 60 o 120 (pantallas rápidas)
+// solo gastaba batería y hacía que todo se sintiera lento.
+function dibujar(ahora){
+  requestAnimationFrame(dibujar);
+  if (!enEstudio() || document.hidden) return;   // en el inicio o en el visor no se dibuja nada
+  if (ahora - ultimoCuadro < 1000 / 30 - 3) return;
+  ultimoCuadro = ahora;
   const meta = altoMeta();
   s.topH += (meta - s.topH) * 0.22;
   if (Math.abs(meta - s.topH) < 1) s.topH = meta;
@@ -387,14 +393,14 @@ function dibujar(){
   dibujarSubs(cy, ch);
   dibujarMarca();
 
-  if (s.rec) $('tiempo').textContent = fmt((Date.now() - s.recStart) / 1000);
+  // Lo de la pantalla (fuera del lienzo) se toca solo cuando cambia: tocarlo en cada cuadro traba al celular
+  if (s.rec){ const sr = ((Date.now() - s.recStart) / 1000) | 0; if (sr !== ultimoRec){ ultimoRec = sr; $('tiempo').textContent = fmt(sr); } }
   if (s.hasVideo && vid.duration){
-    if (!arrastrandoBarra) $('barra').value = Math.round(vid.currentTime / vid.duration * 1000);
+    if (!arrastrandoBarra && !buscando && ahora - ultimaBarra > 200){ ultimaBarra = ahora; barra.value = Math.round(vid.currentTime / vid.duration * 1000); }
     const sg = vid.currentTime | 0;
     if (sg !== ultimoSeg){ ultimoSeg = sg; $('tAct').textContent = fmt(vid.currentTime); $('tDur').textContent = fmt(vid.duration); }
   }
   medirMic();
-  requestAnimationFrame(dibujar);
 }
 function medirMic(){
   if (!s.audio || $('hoja').hidden || tabActual !== 'sonido') return;
@@ -472,7 +478,7 @@ $('archivo').onchange = e => {
   if (!f) return;
   if (vid.src) URL.revokeObjectURL(vid.src);
   vid.src = URL.createObjectURL(f);
-  s.hasVideo = true; s.ended = false; s.solo = false; s.vT = { z: 1, x: 0, y: 0 };
+  s.hasVideo = true; s.ended = false; s.solo = false; s.vT = { z: 1, x: 0, y: 0 }; ocultarFin();
   audioBase();
   vid.onloadedmetadata = () => { vid.currentTime = 0.01; };
   actualizar();
@@ -497,7 +503,7 @@ async function alternarVideo(){
   if (!s.hasVideo) return;
   await despertarAudio();
   if (vid.paused || vid.ended){
-    if (vid.ended || s.ended){ vid.currentTime = 0; s.ended = false; }
+    if (vid.ended || s.ended){ irA(0); s.ended = false; }
     s.solo = false;
     try { await vid.play(); } catch (e){ toast('No se pudo reproducir este video.'); }
   } else {
@@ -512,14 +518,35 @@ $('solo').onclick = () => {
   s.solo = !s.solo; actualizar();
 };
 
+// Ir a un momento del video. Si el celular todavía está buscando, se guarda el pedido y se hace al terminar:
+// así la barra responde al instante en vez de amontonar búsquedas.
+let buscando = false, pendiente = null, buscandoT = null;
+function irA(t, rapido){
+  if (!s.hasVideo || !vid.duration) return;
+  t = limitar(t, 0, Math.max(0, vid.duration - 0.05));
+  if (s.ended){ s.ended = false; actualizar(); }
+  $('tAct').textContent = fmt(t); ultimoSeg = t | 0;
+  if (buscando){ pendiente = { t, rapido }; return; }
+  buscando = true;
+  clearTimeout(buscandoT); buscandoT = setTimeout(finBusqueda, 1500);   // por si el celular nunca avisa
+  if (rapido && vid.fastSeek) vid.fastSeek(t); else vid.currentTime = t;
+}
+function finBusqueda(){
+  buscando = false; clearTimeout(buscandoT);
+  if (pendiente){ const p = pendiente; pendiente = null; irA(p.t, p.rapido); }
+}
+vid.addEventListener('seeked', finBusqueda);
 const barra = $('barra');
 barra.addEventListener('pointerdown', () => { arrastrandoBarra = true; });
-['pointerup', 'pointercancel', 'change'].forEach(ev => barra.addEventListener(ev, () => { arrastrandoBarra = false; }));
-barra.oninput = () => {
-  if (!vid.duration) return;
-  vid.currentTime = barra.value / 1000 * vid.duration;
-  if (s.ended){ s.ended = false; actualizar(); }
-};
+['pointerup', 'pointercancel', 'change'].forEach(ev => barra.addEventListener(ev, () => {
+  if (!arrastrandoBarra) return;
+  arrastrandoBarra = false;
+  if (vid.duration) irA(barra.value / 1000 * vid.duration, false);   // al soltar, el cuadro exacto
+}));
+barra.oninput = () => { if (vid.duration) irA(barra.value / 1000 * vid.duration, true); };
+$('aInicio').onclick = () => { if (!s.rec && !vid.paused) vid.pause(); irA(0); barra.value = 0; toast('Video al inicio', 1100); };
+$('atras5').onclick = () => irA(vid.currentTime - 5);
+$('adelante5').onclick = () => irA(vid.currentTime + 5);
 
 function actualizar(){
   const sonando = s.hasVideo && !vid.paused && !vid.ended;
@@ -532,6 +559,9 @@ function actualizar(){
   $('solo').classList.toggle('on', enPausa && s.solo);
   $('soloIco').setAttribute('href', enPausa && s.solo ? '#i-dividir' : '#i-solo');
   $('solo').setAttribute('aria-label', enPausa && s.solo ? 'Ver el video' : 'Salir yo solo');
+  $('soloTxt').textContent = enPausa && s.solo ? 'Ver video' : 'Yo solo';
+  $('quitar').disabled = !!s.rec;
+  $('ladoVideo').hidden = !!s.rec; $('repetirToma').hidden = !s.rec;
 
   let aviso = '';
   if (!s.camStream && enEstudio() && !cam.srcObject) aviso = 'Abriendo la cámara…';
@@ -556,6 +586,7 @@ function actualizar(){
   if (s.rec && s.hasVideo){
     pista = sonando ? 'Toca ▶ para pausar y opinar.' : s.ended ? 'Cierra con tu conclusión y toca el botón rojo para terminar.' : 'Toca ▶ para que aparezca el video.';
   } else if (s.rec) pista = 'Grabando. Toca el botón rojo para terminar.';
+  if (s.rec) pista += ' ¿Te equivocaste? Toca Empezar de nuevo.';
   $('pista').textContent = pista;
 }
 
@@ -570,7 +601,9 @@ async function empezar(){
   if (!s.camStream){ toast('Primero permite la cámara.'); try { await abrirCamara(); } catch (e){} if (!s.camStream) return; }
   await despertarAudio();
   const a = audioBase();
-  const stream = new MediaStream([...cv.captureStream(30).getVideoTracks(), ...a.dest.stream.getAudioTracks()]);
+  if (s.lienzoPista) s.lienzoPista.stop();   // la captura anterior se cierra: dejarlas abiertas volvía lenta la app
+  s.lienzoPista = cv.captureStream(30).getVideoTracks()[0];
+  const stream = new MediaStream([s.lienzoPista, ...a.dest.stream.getAudioTracks()]);
   const mime = elegirFormato();
   let rec;
   try { rec = new MediaRecorder(stream, { mimeType: mime || undefined, videoBitsPerSecond: 8_000_000, audioBitsPerSecond: 192_000 }); }
@@ -580,14 +613,17 @@ async function empezar(){
   const saver = s.saver;
   rec.ondataavailable = ev => { if (ev.data && ev.data.size) saver.agregar(ev.data); };
   rec.onstop = async () => {
-    const r = await saver.terminar().catch(() => false);
-    toast(r ? 'Grabación guardada ✔ Está en Tus grabaciones.' : 'No se pudo guardar la grabación.');
+    if (rec.descartar) return;   // "Empezar de nuevo": esta toma no se guarda
+    const id = await saver.terminar().catch(() => false);
+    if (id){ ultimaToma = id; if (enEstudio() && !s.rec) mostrarFin(); else toast('Grabación guardada ✔ Está en Tus grabaciones.'); }
+    else toast('No se pudo guardar la grabación.');
     cargarLista();
   };
   rec.start(1000);
   s.rec = rec; s.recStart = Date.now();
+  ocultarFin();
   if (s.hasVideo){
-    if (s.ended){ vid.currentTime = 0; s.ended = false; }
+    irA(0); s.ended = false;                                // cada toma empieza con el video desde el principio
     if (A.intro){ vid.pause(); s.solo = true; }           // empiezas tú en pantalla completa
     else { s.solo = false; vid.play().catch(() => {}); }  // sin introducción: el video arranca de una vez
   }
@@ -595,14 +631,54 @@ async function empezar(){
   $('rec').hidden = false; $('estudio').classList.add('grabando');
   actualizar();
 }
-function detener(){
+function detener(descartar){
   if (!s.rec) return;
+  s.rec.descartar = !!descartar;
   s.rec.stop(); s.rec = null; vid.pause(); s.solo = false;
+  if (s.lienzoPista){ s.lienzoPista.stop(); s.lienzoPista = null; }
+  repetirListo(false);
   $('grabar').classList.remove('on'); $('grabar').setAttribute('aria-label', 'Grabar');
   $('rec').hidden = true; $('estudio').classList.remove('grabando');
   actualizar();
 }
 $('grabar').onclick = () => s.rec ? detener() : empezar();
+
+// "Empezar de nuevo" mientras grabas: el primer toque pide confirmar; el segundo borra la toma y vuelve a empezar
+let repetirT = null;
+function repetirListo(si){
+  clearTimeout(repetirT);
+  $('repetirToma').classList.toggle('confirmar', si);
+  $('repetirTxt').textContent = si ? '¿Seguro? Toca otra vez' : 'Empezar de nuevo';
+  if (si) repetirT = setTimeout(() => repetirListo(false), 3000);
+}
+$('repetirToma').onclick = async () => {
+  if (!s.rec) return;
+  if (!$('repetirToma').classList.contains('confirmar')){ repetirListo(true); return; }
+  detener(true);
+  toast('Toma descartada. Empezamos otra vez.', 1600);
+  await empezar();
+};
+
+// Tarjeta al terminar: ver, borrar o grabar otra vez
+let ultimaToma = null;
+function mostrarFin(){ $('fin').hidden = false; }
+function ocultarFin(){ $('fin').hidden = true; }
+$('finCerrar').onclick = ocultarFin;
+$('finOtra').onclick = () => { ocultarFin(); empezar(); };
+$('finVer').onclick = async () => {
+  ocultarFin();
+  let t = tomas.find(x => x.id === ultimaToma);
+  if (!t){ await cargarLista(); t = tomas.find(x => x.id === ultimaToma); }
+  if (!t) return;
+  salirEstudio(); abrirVisor(t);
+};
+$('finBorrar').onclick = async () => {
+  if (!ultimaToma) return;
+  await Almacen.borrar({ id: ultimaToma }).catch(() => {});
+  ultimaToma = null; ocultarFin(); cargarLista();
+  irA(0); s.ended = false; actualizar();
+  toast('Toma borrada. Toca el botón rojo para grabar otra.', 2200);
+};
 
 /* ---------------- Almacenamiento en el teléfono (IndexedDB) ---------------- */
 // Pide que el navegador no borre las grabaciones para liberar espacio
@@ -632,8 +708,9 @@ const Almacen = {
       agregar(b){ partes.push(b); },
       async terminar(){
         const fecha = Date.now();
-        await tx('tomas', 'readwrite', st => st.put({ id: `reaccion-${fecha}.${ext}`, fecha, blob: new Blob(partes, { type: tipo }) }));
-        return true;
+        const id = `reaccion-${fecha}.${ext}`;
+        await tx('tomas', 'readwrite', st => st.put({ id, fecha, blob: new Blob(partes, { type: tipo }) }));
+        return id;
       },
     };
   },
@@ -893,10 +970,13 @@ $('nueva').onclick = async () => {
   try { await abrirCamara(); } catch (e){}
   if (A.subs.on) subsIniciar();
 };
+function salirEstudio(){
+  detener(); vid.pause(); pararCamara(); cam.srcObject = null; subsParar(); cerrarHoja(); ocultarFin(); pantallaEncendida(false);
+  mostrar('inicio');
+}
 $('volver').onclick = () => {
   if (s.rec && !confirm('Estás grabando. ¿Detener y guardar?')) return;
-  detener(); vid.pause(); pararCamara(); cam.srcObject = null; subsParar(); cerrarHoja(); pantallaEncendida(false);
-  mostrar('inicio');
+  salirEstudio();
 };
 
 // Si la app pasa a segundo plano mientras graba, se detiene y guarda para no perder la toma

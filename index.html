@@ -35,6 +35,11 @@
     <symbol id="i-repetir" viewBox="0 0 24 24"><path d="M5 12a7 7 0 1 0 2.1-5"/><path d="M5 4.5V9h4.5"/></symbol>
     <symbol id="i-solo" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></symbol>
     <symbol id="i-dividir" viewBox="0 0 24 24"><rect x="5" y="3.5" width="14" height="17" rx="2"/><path d="M5 12h14"/></symbol>
+    <symbol id="i-inicio" viewBox="0 0 24 24"><path d="M6 5v14"/><path d="M18 5.5v13L9 12z" fill="currentColor"/></symbol>
+    <symbol id="i-atras5" viewBox="0 0 24 24"><path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3"/><path d="M4.5 4v4.5H9"/><text x="12.2" y="15.6" font-size="8" font-weight="800" text-anchor="middle" fill="currentColor" stroke="none" font-family="system-ui,sans-serif">5</text></symbol>
+    <symbol id="i-adelante5" viewBox="0 0 24 24"><path d="M19.5 12a7.5 7.5 0 1 1-2.2-5.3"/><path d="M19.5 4v4.5H15"/><text x="11.8" y="15.6" font-size="8" font-weight="800" text-anchor="middle" fill="currentColor" stroke="none" font-family="system-ui,sans-serif">5</text></symbol>
+    <symbol id="i-ojo" viewBox="0 0 24 24"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-basura" viewBox="0 0 24 24"><path d="M4.5 7h15M9.5 7V4.5h5V7M6.5 7l1 13h9l1-13"/></symbol>
     <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
     <symbol id="i-atras" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
   </defs>
@@ -96,6 +101,17 @@
         <button id="zMas" aria-label="Acercar tu cámara">+</button>
       </div>
 
+      <!-- Al terminar una toma: verla, borrarla o grabar otra vez -->
+      <div id="fin" class="fin" hidden>
+        <b>Toma guardada ✔</b>
+        <div class="fin-bot">
+          <button id="finVer" class="fb"><svg><use href="#i-ojo"/></svg>Ver</button>
+          <button id="finBorrar" class="fb rojo"><svg><use href="#i-basura"/></svg>Borrar</button>
+          <button id="finOtra" class="fb oro"><svg><use href="#i-repetir"/></svg>Grabar otra vez</button>
+        </div>
+        <button id="finCerrar" class="fin-x" aria-label="Cerrar"><svg><use href="#i-x"/></svg></button>
+      </div>
+
       <!-- Herramientas rápidas, como en TikTok o Instagram -->
       <nav class="riel" aria-label="Herramientas">
         <button id="rGirar" class="r"><i><svg><use href="#i-girar"/></svg></i><small>Girar</small></button>
@@ -109,18 +125,28 @@
   </div>
 
   <div id="filaVideo" class="fila-video" hidden>
-    <button id="quitar" class="mini-ico" aria-label="Quitar este video" title="Quitar este video"><svg><use href="#i-x"/></svg></button>
-    <span id="tAct" class="t">0:00</span>
-    <input id="barra" type="range" min="0" max="1000" value="0" aria-label="Posición del video">
-    <span id="tDur" class="t">0:00</span>
-    <button id="solo" class="mini-ico" aria-label="Salir yo solo" title="En pausa: salir tú solo o ver el video"><svg><use id="soloIco" href="#i-solo"/></svg></button>
+    <div class="linea-t">
+      <span id="tAct" class="t">0:00</span>
+      <input id="barra" type="range" min="0" max="1000" value="0" aria-label="Posición del video">
+      <span id="tDur" class="t">0:00</span>
+    </div>
+    <div class="chips">
+      <button id="aInicio" class="chip"><svg><use href="#i-inicio"/></svg><small>Inicio</small></button>
+      <button id="atras5" class="chip"><svg><use href="#i-atras5"/></svg><small>−5 s</small></button>
+      <button id="adelante5" class="chip"><svg><use href="#i-adelante5"/></svg><small>+5 s</small></button>
+      <button id="solo" class="chip" aria-label="Salir yo solo"><svg><use id="soloIco" href="#i-solo"/></svg><small id="soloTxt">Yo solo</small></button>
+      <button id="quitar" class="chip" aria-label="Quitar este video"><svg><use href="#i-x"/></svg><small>Quitar</small></button>
+    </div>
   </div>
 
   <div class="barra-inf">
-    <label class="lado">
+    <label id="ladoVideo" class="lado">
       <input id="archivo" type="file" accept="video/*" hidden>
       <span class="ico-txt"><svg><use href="#i-video"/></svg></span><small>Video</small>
     </label>
+    <button id="repetirToma" class="lado" hidden>
+      <span class="ico-txt"><svg><use href="#i-repetir"/></svg></span><small id="repetirTxt">Empezar de nuevo</small>
+    </button>
     <button id="grabar" class="grabar" aria-label="Grabar"><span></span></button>
     <button id="play" class="lado" disabled>
       <span class="ico-txt"><svg><use id="playIco" href="#i-play"/></svg></span><small id="playTxt">Reproducir</small>
