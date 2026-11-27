@@ -1,9 +1,9 @@
 // Guarda la app en el teléfono para que abra sin internet.
 // Al cambiar cualquier archivo, sube el número de VERSION para que los teléfonos tomen la nueva.
-const VERSION = 'reacciones-v7';
+const VERSION = 'reacciones-v8';
 const LETRAS = 'reacciones-letras';
 const MODELOS = 'reacciones-modelos';   // recorte de silueta (MediaPipe), se guarda la primera vez
-const ARCHIVOS = ['./', 'index.html', 'app.js?v=4', 'estilos.css?v=4', 'manifest.webmanifest',
+const ARCHIVOS = ['./', 'index.html', 'app.js?v=5', 'estilos.css?v=5', 'manifest.webmanifest',
   'iconos/icono-180.png', 'iconos/icono-192.png', 'iconos/icono-512.png'];
 
 self.addEventListener('install', e => {

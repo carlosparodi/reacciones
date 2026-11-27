@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@500&display=swap">
-<link rel="stylesheet" href="estilos.css?v=4">
+<link rel="stylesheet" href="estilos.css?v=5">
 </head>
 <body>
 
@@ -40,6 +40,8 @@
     <symbol id="i-adelante5" viewBox="0 0 24 24"><path d="M19.5 12a7.5 7.5 0 1 1-2.2-5.3"/><path d="M19.5 4v4.5H15"/><text x="11.8" y="15.6" font-size="8" font-weight="800" text-anchor="middle" fill="currentColor" stroke="none" font-family="system-ui,sans-serif">5</text></symbol>
     <symbol id="i-ojo" viewBox="0 0 24 24"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></symbol>
     <symbol id="i-basura" viewBox="0 0 24 24"><path d="M4.5 7h15M9.5 7V4.5h5V7M6.5 7l1 13h9l1-13"/></symbol>
+    <symbol id="i-enlace" viewBox="0 0 24 24"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1.2 1.2"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1.2-1.2"/></symbol>
+    <symbol id="i-galeria" viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="15" rx="2.2"/><circle cx="9" cy="10" r="1.8"/><path d="M3.5 17l5-4.5 4 3.5 3-2.5 5 4"/></symbol>
     <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
     <symbol id="i-atras" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
   </defs>
@@ -71,8 +73,8 @@
   <details class="guia">
     <summary>Cómo se usa</summary>
     <ol>
-      <li>Toca <b>Nueva reacción</b> y permite la cámara y el micrófono.</li>
-      <li>Toca <b>Video</b> y elige de tu galería el video que vas a comentar.</li>
+      <li>Toca <b>Nueva reacción</b> y pega el link del video de TikTok, Instagram o Facebook (o elígelo de tu galería).</li>
+      <li>Permite la cámara y el micrófono.</li>
       <li>Toca el botón rojo para grabar. Si tienes la <b>Intro</b> activada, empiezas tú en pantalla completa para presentarte.</li>
       <li>Toca <b>▶</b>: el video aparece arriba y tú abajo. Tócalo otra vez para pausar y opinar.</li>
       <li>Con los dedos mueves y haces zoom en cada parte. Arrastra la línea blanca para cambiar el tamaño. Doble toque restablece.</li>
@@ -81,6 +83,34 @@
     <p>En la barra de la derecha del estudio cambias la cámara, el espejo, dónde sales tú, la introducción y tu fondo. En <b>Ajustes</b> está todo lo demás: sonido, recorte del video, marca de agua y subtítulos.</p>
   </details>
 </main>
+
+<!-- ===== Elegir el video: pegar link o galería (antes de abrir la cámara) ===== -->
+<section id="enlace" class="pantalla" hidden>
+  <div class="barra-sup">
+    <button id="enlaceVolver" class="ico" aria-label="Volver"><svg><use href="#i-atras"/></svg></button>
+    <b>¿Qué video vas a comentar?</b>
+    <span class="ico vacio-ico"></span>
+  </div>
+  <div class="enlace-cuerpo">
+    <div class="tarjeta-enlace">
+      <label for="link" class="et-enlace"><svg><use href="#i-enlace"/></svg> Pega el link del video</label>
+      <p class="nota">TikTok, Instagram o Facebook. Se descarga sin marca de agua.</p>
+      <div class="fila-link">
+        <input id="link" class="texto" type="url" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="https://www.tiktok.com/…">
+        <button id="pegar" class="btn-pegar">Pegar</button>
+      </div>
+      <button id="descargar" class="btn-grande"><svg><use href="#i-enlace"/></svg> Descargar y empezar</button>
+      <div id="progreso" class="progreso" hidden><i id="progresoBarra"></i></div>
+      <p id="enlaceEstado" class="estado" hidden></p>
+    </div>
+    <div class="o"><span>o</span></div>
+    <label class="btn-linea btn-op">
+      <input id="archivoInicio" type="file" accept="video/*" hidden>
+      <svg><use href="#i-galeria"/></svg> Elegir de mi galería
+    </label>
+    <button id="sinVideo" class="btn-linea btn-op">Sin video: solo grabarme</button>
+  </div>
+</section>
 
 <!-- ===== Estudio ===== -->
 <section id="estudio" class="pantalla" hidden>
@@ -289,6 +319,6 @@
 
 <div id="toast" class="toast" hidden></div>
 
-<script src="app.js?v=4"></script>
+<script src="app.js?v=5"></script>
 </body>
 </html>

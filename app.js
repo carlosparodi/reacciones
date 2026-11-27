@@ -68,7 +68,7 @@ function toast(msg, ms = 2600){
   clearTimeout(toastT); toastT = setTimeout(() => t.hidden = true, ms);
 }
 const fmt = sec => { sec = Math.max(0, sec | 0); return Math.floor(sec / 60) + ':' + String(sec % 60).padStart(2, '0'); };
-function mostrar(id){ ['inicio', 'estudio', 'visor'].forEach(p => $(p).hidden = p !== id); }
+function mostrar(id){ ['inicio', 'enlace', 'estudio', 'visor'].forEach(p => $(p).hidden = p !== id); }
 const enEstudio = () => !$('estudio').hidden;
 
 // Imagen o video guardado (logo, fondos): se carga desde un Blob
@@ -473,15 +473,18 @@ cv.addEventListener('pointerup', soltar);
 cv.addEventListener('pointercancel', soltar);
 
 /* ---------------- Video que comentas ---------------- */
-$('archivo').onchange = e => {
-  const f = e.target.files[0]; e.target.value = '';
-  if (!f) return;
+function cargarVideo(f){
   if (vid.src) URL.revokeObjectURL(vid.src);
   vid.src = URL.createObjectURL(f);
   s.hasVideo = true; s.ended = false; s.solo = false; s.vT = { z: 1, x: 0, y: 0 }; ocultarFin();
   audioBase();
   vid.onloadedmetadata = () => { vid.currentTime = 0.01; };
   actualizar();
+}
+$('archivo').onchange = e => {
+  const f = e.target.files[0]; e.target.value = '';
+  if (!f) return;
+  cargarVideo(f);
   toast('Video listo. Toca ▶ para reproducirlo.');
 };
 vid.onended = () => { s.ended = true; actualizar(); };
@@ -729,6 +732,116 @@ const Almacen = {
   async borrar(t){ await tx('tomas', 'readwrite', st => st.delete(t.id)); },
 };
 
+/* ---------------- Descargar el video desde un link ---------------- */
+// TikTok: tikwm entrega el video original sin marca de agua.
+// Instagram y Facebook (y TikTok si tikwm falla): servidores públicos de cobalt, uno tras otro.
+const COBALT = ['https://cobaltapi.cjs.nz/', 'https://rue-cobalt.xenon.zone/'];
+const SITIOS = [
+  { nombre: 'TikTok', re: /(^|\.)tiktok\.com$/ },
+  { nombre: 'Instagram', re: /(^|\.)instagram\.com$/ },
+  { nombre: 'Facebook', re: /(^|\.)(facebook\.com|fb\.watch|fb\.com)$/ },
+];
+function sitioDe(texto){
+  const m = (texto || '').match(/https?:\/\/[^\s"'<>]+/i);   // sirve aunque peguen el texto completo de "compartir"
+  if (!m) return null;
+  try { const u = new URL(m[0]); const sitio = SITIOS.find(x => x.re.test(u.hostname.toLowerCase())); return sitio ? { url: u.href, sitio: sitio.nombre } : null; }
+  catch (e){ return null; }
+}
+function enlaceEstado(txt, error){ const e = $('enlaceEstado'); e.hidden = !txt; e.textContent = txt || ''; e.classList.toggle('err', !!error); }
+function progreso(f){
+  const p = $('progreso'); p.hidden = f === null;
+  p.classList.toggle('indef', f === -1);
+  $('progresoBarra').style.width = f > 0 ? Math.round(f * 100) + '%' : '0';
+}
+const conTiempo = (ms) => { const c = new AbortController(); setTimeout(() => c.abort(), ms); return c.signal; };
+async function porTikwm(url){
+  const r = await fetch('https://www.tikwm.com/api/', { method: 'POST', body: new URLSearchParams({ url, hd: '1' }), signal: conTiempo(20000) });
+  const j = await r.json();
+  if (j.code !== 0 || !j.data) throw new Error(j.msg || 'tikwm');
+  if (j.data.images && j.data.images.length && !j.data.duration) throw new Error('fotos');
+  // "play" y "hdplay" son sin marca de agua ("wmplay" es con marca). "play" pesa menos: baja rápido y el celular lo mueve fluido
+  const v = j.data.play || j.data.hdplay;
+  if (!v) throw new Error('sin video');
+  return v.startsWith('http') ? v : 'https://www.tikwm.com' + v;
+}
+async function porCobalt(url){
+  let ultimo = null;
+  for (const api of COBALT){
+    try {
+      const r = await fetch(api, { method: 'POST', headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url, videoQuality: '1080', downloadMode: 'auto' }), signal: conTiempo(25000) });
+      const j = await r.json();
+      if (j.status === 'tunnel' || j.status === 'redirect') return j.url;
+      if (j.status === 'picker'){ const v = (j.picker || []).find(x => x.type === 'video'); if (v) return v.url; }
+      ultimo = (j.error && j.error.code) || j.status;
+    } catch (e){ ultimo = e.name === 'AbortError' ? 'tiempo' : String(e); }
+  }
+  throw new Error(ultimo || 'cobalt');
+}
+// Baja el archivo mostrando cuánto falta
+async function bajar(url){
+  const r = await fetch(url);
+  if (!r.ok) throw new Error('http ' + r.status);
+  const total = +r.headers.get('content-length') || 0;
+  if (!r.body || !r.body.getReader){ progreso(-1); return await r.blob(); }
+  const lector = r.body.getReader(), partes = []; let llevo = 0;
+  progreso(total ? 0.001 : -1);
+  for (;;){
+    const { done, value } = await lector.read();
+    if (done) break;
+    partes.push(value); llevo += value.length;
+    if (total) progreso(llevo / total); else enlaceEstado(`Descargando… ${(llevo / 1048576).toFixed(1)} MB`);
+  }
+  return new Blob(partes, { type: r.headers.get('content-type') || 'video/mp4' });
+}
+let descargando = false;
+async function descargarLink(){
+  if (descargando) return;
+  const d = sitioDe($('link').value);
+  if (!d){ enlaceEstado('Pega un link de TikTok, Instagram o Facebook.', true); $('link').focus(); return; }
+  descargando = true; $('descargar').disabled = true;
+  try {
+    enlaceEstado(`Buscando el video de ${d.sitio}…`); progreso(-1);
+    let fuente = null;
+    if (d.sitio === 'TikTok'){ try { fuente = await porTikwm(d.url); } catch (e){ if (e.message === 'fotos') throw e; } }
+    if (!fuente) fuente = await porCobalt(d.url);
+    enlaceEstado('Descargando…');
+    const blob = await bajar(fuente);
+    if (blob.size < 20000 || /json|html|text/.test(blob.type)) throw new Error('archivo raro');
+    progreso(1); enlaceEstado('¡Listo! Abriendo la cámara…');
+    if (!descargando) return;   // tocaron "volver" mientras bajaba
+    cargarVideo(blob);
+    try { localStorage.setItem('ultimo-link', d.url); } catch (e){}
+    setTimeout(() => { progreso(null); enlaceEstado(''); }, 600);
+    $('link').value = '';
+    await entrarEstudio();
+    toast('Video listo. Toca el botón rojo para grabar o ▶ para verlo.', 3000);
+  } catch (e){
+    progreso(null);
+    const m = e.message || '';
+    enlaceEstado(m === 'fotos' ? 'Ese TikTok es de fotos, no de video.'
+      : /private|login|content|empty|unavailable/i.test(m) ? `No se pudo bajar: el video puede ser privado o ${d.sitio} lo está bloqueando. Prueba con otro link o descárgalo y elígelo de tu galería.`
+      : `No se pudo descargar de ${d.sitio} ahora. Revisa tu internet y vuelve a intentar, o descárgalo y elígelo de tu galería.`, true);
+  } finally { descargando = false; $('descargar').disabled = false; }
+}
+$('descargar').onclick = descargarLink;
+$('link').addEventListener('keydown', e => { if (e.key === 'Enter') descargarLink(); });
+$('link').addEventListener('input', () => enlaceEstado(''));
+$('pegar').onclick = async () => {
+  try {
+    const t = await navigator.clipboard.readText();
+    if (t){ $('link').value = t.trim(); enlaceEstado(sitioDe(t) ? '' : 'Eso no parece un link de TikTok, Instagram o Facebook.', !sitioDe(t)); }
+  } catch (e){ $('link').focus(); toast('Mantén el dedo en el cuadro y elige Pegar.', 2200); }
+};
+$('enlaceVolver').onclick = () => { descargando = false; progreso(null); mostrar('inicio'); };
+$('archivoInicio').onchange = async e => {
+  const f = e.target.files[0]; e.target.value = '';
+  if (!f) return;
+  cargarVideo(f); await entrarEstudio();
+  toast('Video listo. Toca el botón rojo para grabar o ▶ para verlo.', 3000);
+};
+$('sinVideo').onclick = async () => { if (s.hasVideo) quitarVideo(); await entrarEstudio(); };
+
 /* ---------------- Inicio: lista de grabaciones ---------------- */
 let tomas = [], actual = null;
 async function cargarLista(){
@@ -962,14 +1075,17 @@ if (window.ResizeObserver) new ResizeObserver(ajustarMarco).observe($('escenario
 window.addEventListener('resize', ajustarMarco);
 
 /* ---------------- Navegación ---------------- */
-$('nueva').onclick = async () => {
+$('nueva').onclick = () => {
+  mostrar('enlace'); enlaceEstado(''); $('descargar').disabled = false;
+};
+async function entrarEstudio(){
   mostrar('estudio'); ajustarMarco(); actualizar();
   pantallaEncendida(true);
   for (const k of ['fondoVideo', 'fondoCam']) if (extras[k] && extras[k].video) extras[k].el.play().catch(() => {});
   if (A.fondo !== 'ninguno') asegurarSeg();
   try { await abrirCamara(); } catch (e){}
   if (A.subs.on) subsIniciar();
-};
+}
 function salirEstudio(){
   detener(); vid.pause(); pararCamara(); cam.srcObject = null; subsParar(); cerrarHoja(); ocultarFin(); pantallaEncendida(false);
   mostrar('inicio');

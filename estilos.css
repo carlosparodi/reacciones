@@ -57,6 +57,30 @@ svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.7;stroke
 .guia p{margin:12px 0 0;color:var(--suave);font-size:14px}
 .guia b{color:var(--oro-hi);font-weight:700}
 
+/* ---------- Elegir el video ---------- */
+#enlace .barra-sup b{font:700 16px var(--body)}
+.enlace-cuerpo{flex:1;overflow-y:auto;padding:14px calc(var(--sr) + 18px) calc(var(--sb) + 18px) calc(var(--sl) + 18px);
+  display:flex;flex-direction:column;gap:14px;width:100%;max-width:640px;margin:0 auto}
+.tarjeta-enlace{display:flex;flex-direction:column;gap:10px;padding:16px;border-radius:16px;
+  background:linear-gradient(180deg,#1b1915,#151412);border:1px solid rgba(216,180,106,.35)}
+.et-enlace{display:flex;align-items:center;gap:8px;font:800 16px var(--body);color:var(--oro-hi)}
+.tarjeta-enlace .nota{margin:-4px 0 2px}
+.fila-link{display:flex;gap:8px}
+.fila-link .texto{flex:1;min-width:0;font-size:15px}
+.btn-pegar{flex:none;padding:0 16px;border-radius:12px;font:700 14px var(--body);background:rgba(216,180,106,.14);color:var(--oro-hi);border:1px solid rgba(216,180,106,.4)}
+.btn-pegar:active{transform:scale(.96)}
+.btn-grande svg{width:22px;height:22px}
+.btn-grande:disabled{opacity:.55}
+.progreso{height:8px;border-radius:8px;background:rgba(255,255,255,.08);overflow:hidden}
+.progreso i{display:block;height:100%;width:0;border-radius:8px;background:linear-gradient(90deg,#c9a157,#ecd19a);transition:width .2s linear}
+.progreso.indef i{width:35%!important;animation:ida 1.1s ease-in-out infinite alternate}
+@keyframes ida{from{transform:translateX(-10%)}to{transform:translateX(200%)}}
+.tarjeta-enlace .estado{margin:0;text-align:center}
+.o{display:flex;align-items:center;gap:10px;color:var(--suave);font-size:13px}
+.o::before,.o::after{content:"";flex:1;height:1px;background:var(--hair-2)}
+.btn-op{display:flex;align-items:center;justify-content:center;gap:10px;margin:0;padding:15px;cursor:pointer;font-size:15px}
+.btn-op svg{width:22px;height:22px}
+
 /* ---------- Barras ---------- */
 .barra-sup{display:flex;align-items:center;justify-content:space-between;
   padding:calc(var(--st) + 6px) 10px 6px;gap:8px;z-index:2;flex:none}
